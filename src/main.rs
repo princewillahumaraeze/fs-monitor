@@ -64,12 +64,25 @@ impl FileMonitor {
 
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
 
+    if args.len() < 2 {
+        eprintln!("Usage: {} <directory_to_monitor>", args[0]);
+        std::process::exit(1);
+    }
 
-    let direct_to_monitor = "./monitor_dir"; // Change to your directory
-    let mut monitor = FileMonitor::new(direct_to_monitor);
+    let directory_to_monitor = &args[1];
 
-    println!("Monitoring Directory: {}", direct_to_monitor);
+     let path = Path::new(directory_to_monitor);
+
+    if !path.exists() || !path.is_dir() {
+        eprintln!("Error: '{}' is not a valid directory", directory_to_monitor);
+        std::process::exit(1);
+    }
+
+    let mut monitor = FileMonitor::new(directory_to_monitor);
+
+    println!("Monitoring Directory: {}", directory_to_monitor);
     loop {
         let changes  = monitor.detect_changes();
         for (path, state) in changes {
