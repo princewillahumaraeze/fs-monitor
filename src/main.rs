@@ -56,6 +56,14 @@ impl FileMonitor {
                 None => changes.push((path.clone(), FileState::Created)),
             }
         }
+
+        // Detect File Deletions
+       for path in self.file_states.keys() {
+            if !current_file_states.contains_key(path) {
+                changes.push((path.clone(), FileState::Deleted));
+            }
+        }
+
         self.file_states = current_file_states;
         changes
     }
